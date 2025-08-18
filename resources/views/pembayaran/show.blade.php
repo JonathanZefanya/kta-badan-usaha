@@ -9,9 +9,13 @@
         <div class="alert alert-danger">{{ session('error') }}</div>
     @endif
     @if($pembayaran)
-        <div class="alert alert-info">Status pembayaran: <b>{{ $pembayaran->status }}</b></div>
-        <p>Metode: {{ $pembayaran->metode }}</p>
-        <p>Bukti pembayaran: <a href="{{ asset('storage/' . $pembayaran->bukti_pembayaran) }}" target="_blank">Lihat File</a></p>
+        <div class="alert alert-info">Status pembayaran: <b>{{ $pembayaran->status }}</b>
+            @if($pembayaran->status === 'Ditolak')
+                    <p>Keterangan: {{ $pembayaran->keterangan_tolak }}</p>
+                @endif
+        </div>
+    <p>Metode: {{ $pembayaran->metode }}</p>
+    <p>Bukti pembayaran: <a href="{{ asset('storage/' . $pembayaran->bukti_pembayaran) }}" target="_blank">Lihat File</a></p>
     @else
     <form method="POST" action="{{ route('pembayaran.store', $usaha->id) }}" enctype="multipart/form-data">
         @csrf

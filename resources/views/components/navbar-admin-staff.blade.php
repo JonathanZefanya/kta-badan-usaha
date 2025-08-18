@@ -12,6 +12,11 @@
         <li class="nav-item">
           <a class="nav-link text-white" href="{{ route('admin.badanusaha.index') }}"><i class="bi bi-building"></i> Data Badan Usaha</a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('admin.transaksi.index') }}">
+                <i class="bi bi-clock-history me-1"></i> History Transaksi
+            </a>
+        </li>
   @if(auth()->user()->role === 'admin')
         <li class="nav-item">
           <a class="nav-link text-white" href="{{ route('admin.users.index') }}"><i class="bi bi-people"></i> Users</a>
@@ -33,4 +38,5 @@
     </div>
   </div>
 </nav>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 @endif

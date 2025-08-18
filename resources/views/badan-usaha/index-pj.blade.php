@@ -26,13 +26,12 @@
                 </td>
                 <td>
                     @if($usaha->invoice)
-                        <a href="{{ route('invoice.show', $usaha->id) }}" class="btn btn-info btn-sm">Lihat Invoice</a>
+                        <a href="{{ route('invoice.show', $usaha->id) }}" class="btn btn-info btn-sm mb-1">Lihat Invoice</a>
                         @php
-                            $pembayaran = \App\Models\Pembayaran::where('badan_usaha_id', $usaha->id)->where('status', 'Terverifikasi')->first();
+                            $pembayaran = \App\Models\Pembayaran::where('badan_usaha_id', $usaha->id)->first();
                         @endphp
-                        @if($usaha->invoice->status == 'Sudah Dibayar' && $pembayaran)
-                            <br>
-                            <a href="{{ route('kta.show', $usaha->id) }}" class="btn btn-warning btn-sm mt-2">Show KTA</a>
+                        @if($usaha->invoice->status == 'Sudah Dibayar' && $pembayaran && $pembayaran->status == 'Terverifikasi')
+                            <a href="{{ route('kta.show', $usaha->id) }}" class="btn btn-warning btn-sm mt-1">Show KTA</a>
                         @endif
                     @else
                         <span class="text-muted">Belum ada invoice</span>
@@ -64,15 +63,15 @@
                     @endif
                 </td>
                 <td>
-                    @if($usaha->status_verifikasi != 'Terverifikasi')
+                    @if($usaha->status_verifikasi == 'Terverifikasi')
+                        <span class="text-success fw-bold">BU Terverifikasi</span>
+                    @else
                         <a href="{{ route('badan-usaha.edit', $usaha->id) }}" class="btn btn-warning btn-sm"><i class="bi bi-pencil-square"></i></a>
                         <form method="POST" action="{{ route('badan-usaha.destroy', $usaha->id) }}" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
                         </form>
-                    @else
-                        <span class="text-success">Sudah Diverifikasi</span>
                     @endif
                 </td>
             </tr>

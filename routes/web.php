@@ -110,6 +110,9 @@ Route::post('/admin/badan-usaha/{id}/tolak', [BadanUsahaController::class, 'tola
 Route::post('/admin/badan-usaha/{id}/invoice', [BadanUsahaController::class, 'invoice'])->name('admin.badanusaha.invoice');
 Route::post('/admin/badan-usaha/pembayaran/{id}/verifikasi', [BadanUsahaController::class, 'verifikasiPembayaran'])->name('admin.badanusaha.verifikasiPembayaran');
 
+// History Transaksi (admin)
+Route::get('/admin/transaksi', [\App\Http\Controllers\TransaksiController::class, 'index'])->name('admin.transaksi.index');
+
 // PJ
 Route::get('/pj/badan-usaha', [BadanUsahaController::class, 'indexPJ'])->name('pj.badanusaha.index');
 Route::get('/pj/invoice/{id}', [InvoiceController::class, 'show'])->name('invoice.show');
@@ -119,3 +122,10 @@ Route::post('/admin/badan-usaha/pembayaran/{id}/tolak', [BadanUsahaController::c
 
 // KTA (Kartu Tanda Anggota)
 Route::get('/kta/{id}', [BadanUsahaController::class, 'showKTA'])->name('kta.show');
+
+// KTA Verifikasi QR
+Route::get('/kta/{id}/verifikasi', function($id) {
+    $usaha = \App\Models\BadanUsaha::findOrFail($id);
+    // Logika verifikasi, misal tampilkan data usaha dan status KTA
+    return view('kta.verifikasi', compact('usaha'));
+})->name('kta.verifikasi');

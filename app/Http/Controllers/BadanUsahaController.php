@@ -21,7 +21,14 @@ class BadanUsahaController extends Controller
     public function showKTA($id)
     {
         $usaha = \App\Models\BadanUsaha::findOrFail($id);
-        return view('kta.show', compact('usaha'));
+        $pembayaran = \App\Models\Pembayaran::where('badan_usaha_id', $id)->where('status', 'Terverifikasi')->first();
+        $invoice = \App\Models\Invoice::where('badan_usaha_id', $id)->first();
+        // Nomor seri KTA bisa dari id atau kombinasi waktu dan id
+        $nomorSeri = 'KTA-' . str_pad($usaha->id, 6, '0', STR_PAD_LEFT);
+        $platform = config('app.name', 'Platform');
+        $tanggalDibuat = $pembayaran ? $pembayaran->updated_at->format('d-m-Y') : date('d-m-Y');
+    $tanggalBerakhir = $pembayaran ? $pembayaran->updated_at->addYears(3)->format('d-m-Y') : date('d-m-Y', strtotime('+3 year'));
+        return view('kta.show', compact('usaha', 'nomorSeri', 'platform', 'tanggalDibuat', 'tanggalBerakhir', 'invoice'));
     }
     // ADMIN: Verifikasi pembayaran PJ
     public function verifikasiPembayaran($id)
@@ -85,10 +92,13 @@ class BadanUsahaController extends Controller
         return redirect()->back()->with('success', 'Invoice berhasil dibuat');
     }
 
-    // ...existing code...
     public function destroy($id)
     {
         $usaha = BadanUsaha::findOrFail($id);
+        // Jika BU sudah terverifikasi, PJ tidak bisa hapus
+        if (Auth::user()->role === 'PJ' && $usaha->status_verifikasi === 'Terverifikasi') {
+            return redirect()->route('badan-usaha.index')->with('error', 'BU ini sudah terverifikasi');
+        }
         $usaha->delete();
         return redirect()->route('badan-usaha.index')->with('success','Data badan usaha berhasil dihapus');
     }
@@ -96,12 +106,20 @@ class BadanUsahaController extends Controller
     public function edit($id)
     {
         $usaha = BadanUsaha::findOrFail($id);
+        // Jika BU sudah terverifikasi, PJ tidak bisa edit
+        if (Auth::user()->role === 'PJ' && $usaha->status_verifikasi === 'Terverifikasi') {
+            return redirect()->route('badan-usaha.index')->with('error', 'BU ini sudah terverifikasi');
+        }
         return view('badan-usaha.edit', compact('usaha'));
     }
 
     public function update(Request $request, $id)
     {
         $usaha = BadanUsaha::findOrFail($id);
+        // Jika BU sudah terverifikasi, PJ tidak bisa update
+        if (Auth::user()->role === 'PJ' && $usaha->status_verifikasi === 'Terverifikasi') {
+            return redirect()->route('badan-usaha.index')->with('error', 'BU ini sudah terverifikasi');
+        }
         $request->validate([
             'nama_pj' => 'required',
             'bentuk_badan_usaha' => 'required',

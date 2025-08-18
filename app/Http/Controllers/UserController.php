@@ -74,7 +74,7 @@ class UserController extends Controller
     {
         return view('settings.website');
     }
-    public function updateSettingsWebsite(Request $request)
+    public function updateSettingsWebsite(Request $request): RedirectResponse
     {
         return redirect()->route('admin.settings.website')->with('success', 'Settings website berhasil diupdate');
     }
