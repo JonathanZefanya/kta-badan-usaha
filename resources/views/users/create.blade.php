@@ -2,6 +2,16 @@
 @section('content')
 <div class="container mt-4">
     <h2>Tambah User</h2>
+    @if ($errors->any())
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal menambah user',
+                html: `{!! implode('<br>', $errors->all()) !!}`,
+            });
+        </script>
+    @endif
     <form method="POST" action="{{ route('admin.users.store') }}">
         @csrf
         <div class="mb-3">
@@ -26,7 +36,8 @@
         </div>
         <div class="mb-3">
             <label for="password" class="form-label">Password</label>
-            <input type="password" name="password" id="password" class="form-control" required>
+            <input type="password" name="password" id="password" class="form-control" required minlength="6">
+            <small class="text-muted">Minimal 6 karakter</small>
         </div>
         <button type="submit" class="btn btn-primary">Simpan</button>
     </form>

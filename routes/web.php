@@ -46,7 +46,7 @@ Route::post('/invoice/{id}', [InvoiceController::class, 'store'])->name('invoice
 Route::get('/invoice/{id}', [InvoiceController::class, 'show'])->name('invoice.show'); // pj
 
 // User settings
-Route::get('/settings', [UserController::class, 'edit'])->name('user.settings');
+Route::get('/settings', [UserController::class, 'editSettings'])->name('user.settings');
 Route::put('/settings', [UserController::class, 'update'])->name('user.settings.update');
 
 // Dashboard, Data Badan Usaha, Settings Akun (admin & staff)
@@ -72,36 +72,14 @@ Route::get('/admin/settings', function () {
 })->name('admin.settings');
 
 // Users & Settings Website (admin only)
-Route::get('/admin/users', function () {
-    if (!Auth::check() || Auth::user()->role !== 'admin') {
-        abort(403, 'Unauthorized');
-    }
-    return app(App\Http\Controllers\UserController::class)->index();
-})->name('admin.users.index');
-Route::get('/admin/users/create', function () {
-    if (!Auth::check() || Auth::user()->role !== 'admin') {
-        abort(403, 'Unauthorized');
-    }
-    return app(App\Http\Controllers\UserController::class)->create();
-})->name('admin.users.create');
-Route::post('/admin/users', function () {
-    if (!Auth::check() || Auth::user()->role !== 'admin') {
-        abort(403, 'Unauthorized');
-    }
-    return app(App\Http\Controllers\UserController::class)->store(request());
-})->name('admin.users.store');
-Route::get('/admin/settings-website', function () {
-    if (!Auth::check() || Auth::user()->role !== 'admin') {
-        abort(403, 'Unauthorized');
-    }
-    return app(App\Http\Controllers\UserController::class)->settingsWebsite();
-})->name('admin.settings.website');
-Route::put('/admin/settings-website', function () {
-    if (!Auth::check() || Auth::user()->role !== 'admin') {
-        abort(403, 'Unauthorized');
-    }
-    return app(App\Http\Controllers\UserController::class)->updateSettingsWebsite(request());
-})->name('admin.settings.website.update');
+Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users.index');
+Route::get('/admin/users/create', [UserController::class, 'create'])->name('admin.users.create');
+Route::post('/admin/users', [UserController::class, 'store'])->name('admin.users.store');
+Route::get('/admin/users/{id}/edit', [UserController::class, 'edit'])->name('admin.users.edit');
+Route::put('/admin/users/{id}', [UserController::class, 'update'])->name('admin.users.update');
+Route::delete('/admin/users/{id}', [UserController::class, 'destroy'])->name('admin.users.destroy');
+Route::get('/admin/settings-website', [UserController::class, 'showSettingsWebsite'])->name('admin.settings.website');
+Route::put('/admin/settings-website', [UserController::class, 'updateSettingsWebsite'])->name('admin.settings.website.update');
 
 // ADMIN & STAFF
 Route::get('/admin/badan-usaha', [BadanUsahaController::class, 'indexAdmin'])->name('admin.badanusaha.index');
@@ -129,3 +107,6 @@ Route::get('/kta/{id}/verifikasi', function($id) {
     // Logika verifikasi, misal tampilkan data usaha dan status KTA
     return view('kta.verifikasi', compact('usaha'));
 })->name('kta.verifikasi');
+
+// Login as admin
+Route::post('/admin/users/{id}/loginas', [UserController::class, 'loginAs'])->name('admin.users.loginas');
