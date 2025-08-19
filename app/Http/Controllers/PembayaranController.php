@@ -16,7 +16,8 @@ class PembayaranController extends Controller
             return redirect()->route('badan-usaha.index')->with('error', 'Dokumen belum terverifikasi');
         }
         $pembayaran = Pembayaran::where('badan_usaha_id', $id)->first();
-        return view('pembayaran.show', compact('usaha', 'pembayaran'));
+        $settings = \App\Models\SettingsWebsite::first();
+        return view('pembayaran.show', compact('usaha', 'pembayaran', 'settings'));
     }
 
     // Proses pembayaran

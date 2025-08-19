@@ -21,11 +21,19 @@
         @csrf
         <div class="mb-3">
             <label for="metode" class="form-label">Metode Pembayaran <span class="text-danger">*</span></label>
-            <select name="metode" id="metode" class="form-control" required>
+            <select name="metode" id="metode" class="form-control" required onchange="toggleRekeningInfo()">
                 <option value="">Pilih Metode</option>
                 <option value="Transfer">Transfer</option>
                 <option value="QRIS">QRIS</option>
             </select>
+        </div>
+        <div id="rekening-info" class="mb-3" style="display:none;">
+            <div class="card card-body bg-light border">
+                <h5 class="mb-2">Informasi Rekening Pembayaran</h5>
+                <p class="mb-1"><b>Nama Pemilik:</b> {{ $settings->rekening_nama ?? '-' }}</p>
+                <p class="mb-1"><b>Bank:</b> {{ $settings->rekening_bank ?? '-' }}</p>
+                <p class="mb-1"><b>Nomor Rekening:</b> {{ $settings->rekening_nomor ?? '-' }}</p>
+            </div>
         </div>
         <div class="mb-3">
             <label for="bukti_pembayaran" class="form-label">Upload Bukti Pembayaran <span class="text-danger">*</span></label>
@@ -33,6 +41,14 @@
         </div>
         <button type="submit" class="btn btn-primary">Kirim Pembayaran</button>
     </form>
+    <script>
+    function toggleRekeningInfo() {
+        var metode = document.getElementById('metode').value;
+        var rekeningInfo = document.getElementById('rekening-info');
+        rekeningInfo.style.display = (metode === 'Transfer') ? 'block' : 'none';
+    }
+    document.getElementById('metode').addEventListener('change', toggleRekeningInfo);
+    </script>
     @endif
 </div>
 @endsection
