@@ -167,9 +167,30 @@ class BadanUsahaController extends Controller
     }
 
     // PJ: List badan usaha milik sendiri
-    public function indexPJ()
+    public function indexPJ(Request $request)
     {
-        $usahaList = BadanUsaha::with('invoice')->where('user_id', Auth::id())->get();
+        $query = BadanUsaha::with('invoice')->where('user_id', Auth::id());
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('nama_pj', 'like', "%$search%")
+                  ->orWhere('bentuk_badan_usaha', 'like', "%$search%")
+                  ->orWhere('status_verifikasi', 'like', "%$search%")
+                  ->orWhere('email_bu', 'like', "%$search%")
+                  ->orWhere('telepon_bu', 'like', "%$search%")
+                  ->orWhere('kab_kota', 'like', "%$search%")
+                  ->orWhere('kualifikasi', 'like', "%$search%")
+                  ->orWhere('npwp_bu', 'like', "%$search%")
+                  ->orWhere('jenis_badan_usaha', 'like', "%$search%");
+            });
+        }
+        if ($request->filled('status')) {
+            $query->where('status_verifikasi', $request->status);
+        }
+        if ($request->filled('bentuk')) {
+            $query->where('bentuk_badan_usaha', $request->bentuk);
+        }
+        $usahaList = $query->orderByDesc('id')->paginate(8)->withQueryString();
         return view('badan-usaha.index-pj', compact('usahaList'));
     }
 

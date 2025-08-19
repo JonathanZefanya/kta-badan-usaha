@@ -7,9 +7,35 @@
             <h2 class="mb-0"><i class="bi bi-building me-2"></i> Data Badan Usaha Saya</h2>
         </div>
         <div class="card-body bg-light">
+            <form method="GET" class="mb-3">
+                <div class="row g-2 align-items-center">
+                    <div class="col-md-5">
+                        <div class="input-group">
+                            <input type="text" name="search" class="form-control" placeholder="Cari nama PJ, bentuk usaha, status..." value="{{ request('search') }}">
+                            <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i> Cari</button>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <select name="status" class="form-select" onchange="this.form.submit()">
+                            <option value="">Status Verifikasi</option>
+                            <option value="Terverifikasi" {{ request('status')=='Terverifikasi' ? 'selected' : '' }}>Terverifikasi</option>
+                            <option value="Ditolak" {{ request('status')=='Ditolak' ? 'selected' : '' }}>Ditolak</option>
+                            <option value="Proses" {{ request('status')=='Proses' ? 'selected' : '' }}>Proses</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <select name="bentuk" class="form-select" onchange="this.form.submit()">
+                            <option value="">Bentuk Badan Usaha</option>
+                            <option value="PT" {{ request('bentuk')=='PT' ? 'selected' : '' }}>PT</option>
+                            <option value="CV" {{ request('bentuk')=='CV' ? 'selected' : '' }}>CV</option>
+                            <option value="Koperasi" {{ request('bentuk')=='Koperasi' ? 'selected' : '' }}>Koperasi</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-primary">
+                <table class="table table-hover align-middle mb-0 table-modern" style="min-width:700px;">
+                    <thead class="table-modern-header">
                         <tr>
                             <th>Nama Lengkap PJ</th>
                             <th>Bentuk Badan Usaha</th>
@@ -21,7 +47,7 @@
                     </thead>
                     <tbody>
                         @foreach($usahaList as $usaha)
-                        <tr>
+                        <tr style="animation:fadeInRow 0.6s;">
                             <td class="fw-semibold">{{ $usaha->nama_pj }}</td>
                             <td>{{ $usaha->bentuk_badan_usaha }}</td>
                             <td>
@@ -84,6 +110,11 @@
                     </tbody>
                 </table>
             </div>
+            <div class="mt-4 d-flex justify-content-center">
+                @if(method_exists($usahaList, 'links'))
+                    {{ $usahaList->onEachSide(1)->links('vendor.pagination.bootstrap-5') }}
+                @endif
+            </div>
         </div>
     </div>
 </div>
@@ -91,5 +122,66 @@
 <style>
 .card { border-radius:18px; animation:fadeIn 0.7s; }
 @keyframes fadeIn { from { opacity:0; transform:translateY(30px);} to { opacity:1; transform:translateY(0);} }
+@keyframes fadeInRow { from { opacity:0; transform:translateY(20px);} to { opacity:1; transform:translateY(0);} }
+.table-modern {
+    background:#fff;
+    border-radius:16px;
+    box-shadow:0 4px 24px rgba(78,84,200,0.08);
+    overflow:hidden;
+    border-collapse:separate;
+    border-spacing:0;
+}
+.table-modern-header th {
+    background: linear-gradient(90deg,#4e54c8,#8f94fb);
+    color:#fff;
+    font-weight:600;
+    border:none;
+    font-size:1.08rem;
+    padding-top:18px;
+    padding-bottom:18px;
+}
+.table-modern td, .table-modern th {
+    border:none;
+    padding:0.85em 1em;
+    vertical-align:middle;
+}
+.table-modern tbody tr {
+    transition:background 0.2s;
+}
+.table-modern tbody tr:hover {
+    background:rgba(78,84,200,0.07);
+}
+.badge {
+    font-size:1rem;
+    padding:0.5em 1em;
+    border-radius:12px;
+}
+.btn-sm {
+    font-size:0.97rem;
+    padding:0.5em 1.1em;
+    border-radius:8px;
+}
+.pagination {
+    --bs-pagination-bg: #fff;
+    --bs-pagination-border-radius: 12px;
+    --bs-pagination-color: #4e54c8;
+    --bs-pagination-hover-color: #fff;
+    --bs-pagination-hover-bg: #4e54c8;
+    --bs-pagination-active-bg: #8f94fb;
+    --bs-pagination-active-color: #fff;
+    font-size:1.05rem;
+    box-shadow:0 2px 12px rgba(78,84,200,0.08);
+}
+.pagination .page-link {
+    border-radius: 12px !important;
+    margin:0 2px;
+    transition:background 0.2s, color 0.2s;
+}
+@media (max-width: 768px) {
+    .table-responsive { overflow-x:auto; }
+    .table-modern { font-size:0.92rem; }
+    .btn-sm { font-size:0.95rem; padding:0.5em 1em; }
+    th, td { white-space:nowrap; }
+}
 </style>
 @endsection
